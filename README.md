@@ -5,7 +5,7 @@
 
 **Contribution Number:** 1  
 **Student:** Siddhartha Ravilla  
-**Issue:** [https://github.com/medusajs/medusa/issues/15621]
+**Issue:** [https://github.com/medusajs/medusa/issues/15621]    
 **Status:** Phase I Complete
 
 ---
