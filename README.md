@@ -1,12 +1,12 @@
 # github-contribution-log
 
 
-# Contribution [1]: [Combobox Search Input and Tag Invalidation Bugs in Product Organization Form]
+# Contribution [1]: Combobox Search Input and Tag Invalidation Bugs in Product Organization Form
 
-**Contribution Number:** [1]  
+**Contribution Number:** 1  
 **Student:** Siddhartha Ravilla  
-**Issue:** [https://github.com/medusajs/medusa/issues/15621]  
-**Status:** [Phase I] [Complete]
+**Issue:** https://github.com/medusajs/medusa/issues/15621
+**Status:** Phase I Complete
 
 ---
 
