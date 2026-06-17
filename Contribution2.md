@@ -1,8 +1,8 @@
 # Contribution #2: Fix Malformed Unicode Quote in BPMH Save Button
 
-**Contribution Number:** 2
-**Student:** Siddhartha Ravilla
-**Issue:** [#2636 — Fix Malformed Unicode Quote in BPMH Save Button](https://github.com/carlos-emr/carlos/issues/2636)
+**Contribution Number:** 2    
+**Student:** Siddhartha Ravilla        
+**Issue:** [#2636 — Fix Malformed Unicode Quote in BPMH Save Button](https://github.com/carlos-emr/carlos/issues/2636)      
 **Status:** Phase IV — ✅ Complete
 
 ---
