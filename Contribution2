@@ -1,22 +1,17 @@
 # Contribution #2: Fix Malformed Unicode Quote in BPMH Save Button
 
-**Contribution Number:** 2 
-**Student:** Siddhartha Ravilla  
-**Issue:** https://github.com/carlos-emr/carlos/issues/2636  
-**Fork link:** https://github.com/siddhartha928/carlos
-**Status:** Phase IV — Complete
+**Contribution Number:** 2
+**Student:** Siddhartha Ravilla
+**Issue:** [#2636 — Fix Malformed Unicode Quote in BPMH Save Button](https://github.com/carlos-emr/carlos/issues/2636)
+**Status:** Phase IV — ✅ Complete
 
 ---
 
 ## Why I Chose This Issue
 
-I chose this issue because it represented a precise, well-scoped bug with a clear acceptance criteria ideal for a first open-source contribution. 
-The problem involved understanding how browsers and JSP parsers handle non-ASCII characters in HTML attributes, which sits at the intersection of web 
-standards and Java server-side templating.
+I chose this issue because it represented a precise, well-scoped bug with clear acceptance criteria ideal for a first open-source contribution. The problem involved understanding how browsers and JSP parsers handle non-ASCII characters in HTML attributes, which sits at the intersection of web standards and Java server-side templating.
 
-My learning goal was to get comfortable with the full contribution lifecycle: forking a repo, identifying a real bug, verifying it locally, 
-making a minimal targeted fix, and submitting a PR that follows the project's conventions. A focused issue like this let me focus on the 
-process rather than getting overwhelmed by a large feature or complex logic change.
+My learning goal was to get comfortable with the full contribution lifecycle: forking a repo, identifying a real bug, verifying it locally, making a minimal targeted fix, and submitting a PR that follows the project's conventions. A focused issue like this let me focus on the process rather than getting overwhelmed by a large feature or complex logic change.
 
 ---
 
@@ -36,7 +31,7 @@ The opening quote of the `value` attribute was a Unicode "smart quote," which is
 
 ### Affected Components
 
-- `src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp` — specifically the `<input type="submit">` element for the BPMH form save action.
+- `src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp` specifically the `<input type="submit">` element for the BPMH form save action.
 
 ---
 
@@ -54,7 +49,7 @@ Set up the project locally following the standard contributing guide. The main c
 
 ### Reproduction Evidence
 
-- **Commit showing reproduction:** https://github.com/siddhartha928/carlos/blob/fix/2636-malformed-quote-formBPMH/src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp
+- **File showing issue:** [formBPMH.jsp on fix branch](https://github.com/siddhartha928/carlos/blob/fix/2636-malformed-quote-formBPMH/src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp)
 - **Screenshots/logs:** N/A — character-level inspection confirmed the smart quote visually.
 - **My findings:** The malformed quote was confirmed by comparing byte values. The fix is a one-character substitution with no logic change.
 
@@ -84,13 +79,13 @@ Using the UMPIRE framework (adapted):
 3. Verify no other attributes or lines in the file were similarly affected.
 4. Confirm JSP syntax validity.
 
-**Implement:** https://github.com/siddhartha928/carlos/blob/fix/2636-malformed-quote-formBPMH/src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp
+**Implement:** [View fix on branch](https://github.com/siddhartha928/carlos/blob/fix/2636-malformed-quote-formBPMH/src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp)
 
 **Review:**
-- Only the target character is changed.
-- No logic, structure, or other attributes modified.
-- Follows project's JSP conventions.
-- Commit is signed off (DCO) and follows Conventional Commits format.
+- ✅ Only the target character is changed.
+- ✅ No logic, structure, or other attributes modified.
+- ✅ Follows project's JSP conventions.
+- ✅ Commit is signed off (DCO) and follows Conventional Commits format.
 
 **Evaluate:** Visual inspection of the file confirms the correct character. JSP compile and browser render of the form show the save button label correctly.
 
@@ -100,7 +95,7 @@ Using the UMPIRE framework (adapted):
 
 ### Unit Tests
 
-- [x] No unit tests required. This is a markup-level character fix with no logic change.
+- [x] No unit tests required — this is a markup-level character fix with no logic change.
 
 ### Integration Tests
 
@@ -117,30 +112,43 @@ Visually inspected the file before and after the change to confirm only the targ
 
 ### Week 1 Progress
 
-Identified the issue, reproduced it via file inspection, confirmed the exact Unicode codepoint of the offending character, and made the single-character fix. No unexpected challenges . The scope was tightly defined, and the fix was straightforward.
+Identified the issue, reproduced it via file inspection, confirmed the exact Unicode codepoint of the offending character, and made the single-character fix. No unexpected challenges — the scope was tightly defined and the fix was straightforward.
 
 ### Code Changes
 
-- **Files modified:** `src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp`
-- **Key commits:** https://github.com/carlos-emr/carlos/pull/2731
-- **Approach decisions:** Chose the minimal possible change one character, to satisfy the acceptance criteria without risk of introducing unrelated regressions.
+| Item | Detail |
+|------|--------|
+| **Files modified** | `src/main/webapp/WEB-INF/jsp/form/pharmaForms/formBPMH.jsp` |
+| **Pull Request** | [PR #2731](https://github.com/carlos-emr/carlos/pull/2731) |
+| **Approach** | Minimal one-character change to satisfy acceptance criteria without risk of unrelated regressions |
 
 ---
 
 ## Pull Request
 
-**PR Link:** https://github.com/carlos-emr/carlos/pull/2731
+**PR Link:** [carlos-emr/carlos #2731](https://github.com/carlos-emr/carlos/pull/2731)
 
-**PR Description:**
+### PR Description
 
 Fixes a malformed `value` attribute on the BPMH save submit button in `formBPMH.jsp`. The opening quote was a Unicode left double quotation mark (`"`) instead of a standard ASCII double quote (`"`). This could cause the attribute to be parsed incorrectly and render the save button label incorrectly.
 
-Changed `value="<fmt:message key="colcamex.formBPMH.save"/>"` to use a proper ASCII opening quote.
+**Before:**
+```jsp
+value="<fmt:message key="colcamex.formBPMH.save"/>"
+```
 
-**Maintainer Feedback:**
-- [06/08/26]: Awesome work @siddhartha928! Everything looks good! (Sonar failure isn't a you issue, it's a secret token issue so dw about it). Thanks so much! Let me know if you need anything else/want another PR :)
+**After:**
+```jsp
+value="<fmt:message key="colcamex.formBPMH.save"/>"
+```
 
-**Status:** Merged
+### Maintainer Feedback
+
+| Date | Feedback |
+|------|----------|
+| Jun 8, 2026 | *"Awesome work @siddhartha928! Everything looks good! (Sonar failure isn't a you issue, it's a secret token issue so dw about it). Thanks so much! Let me know if you need anything else/want another PR :)"* |
+
+**Status:** ✅ Merged
 
 ---
 
@@ -148,7 +156,7 @@ Changed `value="<fmt:message key="colcamex.formBPMH.save"/>"` to use a proper AS
 
 ### Technical Skills Gained
 
-Learned to distinguish Unicode typographic quotes from ASCII delimiter quotes at the byte level. A subtle class of bug that is easy to miss in standard code review but can silently break HTML parsing. Also practiced the full open-source PR workflow: forking, scoped commits, DCO sign-off, and Conventional Commits formatting.
+Learned to distinguish Unicode typographic quotes from ASCII delimiter quotes at the byte level — a subtle class of bug that is easy to miss in standard code review but can silently break HTML parsing. Also practiced the full open-source PR workflow: forking, scoped commits, DCO sign-off, and Conventional Commits formatting.
 
 ### Challenges Overcome
 
@@ -162,7 +170,7 @@ I would add a note in the PR description about whether a linter or encoding chec
 
 ## Resources Used
 
-- [Unicode Character U+201C Left Double Quotation Mark](https://www.compart.com/en/unicode/U+201C)
-- [HTML attribute syntax — MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
-- [JSP syntax reference](https://docs.oracle.com/javaee/5/tutorial/doc/bnakq.html)
-- Project's CONTRIBUTING.md and Conventional Commits specification
+- [Unicode Character U+201C — Left Double Quotation Mark](https://www.compart.com/en/unicode/U+201C)
+- [HTML attribute syntax — MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes)
+- [JSP syntax reference — Oracle Java EE 5 Tutorial](https://docs.oracle.com/javaee/5/tutorial/doc/bnakq.html)
+- Project's `CONTRIBUTING.md` and [Conventional Commits specification](https://www.conventionalcommits.org/)
