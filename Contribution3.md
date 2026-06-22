@@ -115,10 +115,10 @@ Using UMPIRE framework (adapted):
 
 **Review:** 
 
-[] All 6 files modified with arrow function wrappers            
-[] Linter passes with zero react-doctor/rerender-lazy-state-init warnings           
-[] Code follows the project's existing formatting and style conventions          
-[] Commit message follows the repo's conventional commits format             
+[ ] All 6 files modified with arrow function wrappers            
+[ ] Linter passes with zero react-doctor/rerender-lazy-state-init warnings           
+[ ] Code follows the project's existing formatting and style conventions          
+[ ] Commit message follows the repo's conventional commits format             
 
 **Evaluate:** 
 
