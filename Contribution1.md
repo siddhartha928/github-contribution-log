@@ -19,5 +19,5 @@ Bug 2 appealed to me because it's a classic cache invalidation problem. The quer
 
 ---
 
-# The issue is contributed by others
+# The issue is closed now, as someone submitted a PR
 
