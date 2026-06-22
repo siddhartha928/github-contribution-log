@@ -5,7 +5,7 @@
 **Contribution Number:** [3]  
 **Student:** [Siddhartha Ravilla]  
 **Issue:** [https://github.com/wso2/product-is/issues/27955]  
-**Fork Link:** [https://github.com/siddhartha928/identity-apps]
+**Fork Link:** [https://github.com/siddhartha928/identity-apps]       
 **Status:** Phase II Complete
 
 ---
@@ -38,18 +38,18 @@ computation entirely and use the already-stored state value, avoiding unnecessar
 
 The initializer function is called on every render of the component. If getExcludedStoresFromClaim() (or similar functions) involve any non-trivial computation 
 such as filtering arrays, accessing stores, or parsing data, this results in redundant work on every re-render, degrading performance especially in 
-frequently-updating components.
+frequently updating components.
 
 ### Affected Components
 
 The violation exists across 6 files in the identity-apps monorepo:
 
-admin.claims.v1/components/edit/local-claim/edit-mapped-attributes-local-claims.tsx — line 170
-admin.console-settings.v1/components/console-settings-tabs.tsx — line 202
-admin.login-flow-builder.v1/providers/authentication-flow-provider.tsx — line 147
-admin.logs.v1/components/time-range-selector.tsx — line 57
-admin.org-insights.v1/pages/org-insights.tsx — line 36
-admin.tenants.v1/components/system-settings/system-settings-tabs.tsx — line 116
+admin.claims.v1/components/edit/local-claim/edit-mapped-attributes-local-claims.tsx — line 170           
+admin.console-settings.v1/components/console-settings-tabs.tsx — line 202                   
+admin.login-flow-builder.v1/providers/authentication-flow-provider.tsx — line 147                   
+admin.logs.v1/components/time-range-selector.tsx — line 57                        
+admin.org-insights.v1/pages/org-insights.tsx — line 36                         
+admin.tenants.v1/components/system-settings/system-settings-tabs.tsx — line 116                   
 
 ---
 
@@ -77,7 +77,6 @@ Running pnpm lint from the affected package directories confirmed the react-doct
 ### Reproduction Evidence
 
 - **Commit showing reproduction:** https://github.com/siddhartha928/identity-apps/blob/master/features/admin.claims.v1/components/edit/local-claim/edit-mapped-attributes-local-claims.tsx#L169
-- **Screenshots/logs:** functions are rerendering
 - **My findings:** All 6 violations follow the identical pattern. A function returning computed/derived state is passed directly into useState() without a lazy wrapper.
 - The functions involved (e.g., getExcludedStoresFromClaim()) perform non-trivial lookups, making this a real performance concern rather than a purely stylistic one.
   
@@ -116,10 +115,10 @@ Using UMPIRE framework (adapted):
 
 **Review:** 
 
-[] All 6 files modified with arrow function wrappers
-[] Linter passes with zero react-doctor/rerender-lazy-state-init warnings
-[] Code follows the project's existing formatting and style conventions
-[] Commit message follows the repo's conventional commits format
+[] All 6 files modified with arrow function wrappers            
+[] Linter passes with zero react-doctor/rerender-lazy-state-init warnings           
+[] Code follows the project's existing formatting and style conventions          
+[] Commit message follows the repo's conventional commits format             
 
 **Evaluate:** 
 
