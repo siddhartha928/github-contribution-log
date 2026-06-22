@@ -1,6 +1,6 @@
-8# github-contribution-log - siddhartha928
+# github-contribution-log - siddhartha928
 
-8# Contribution [#3]: Initializer function re-rendering every time
+## Contribution [#3]: Initializer function re-rendering every time
 
 **Contribution Number:** [3]  
 **Student:** [Siddhartha Ravilla]  
