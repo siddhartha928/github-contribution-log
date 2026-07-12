@@ -122,33 +122,33 @@ Using UMPIRE framework (adapted):
 **Implement:** https://github.com/siddhartha928/InvenTree/tree/12232-install-stock-variant-filter
 
 **Review:** 
-[x] Diff is a single-line, scoped change to the exact field causing the bug
-[x] No unrelated formatting; matches project code style
-[x] Doesn't touch backend since the needed filter already existed
-[x] Consistent with CONTRIBUTING.md guidance not to open a PR without manual human review first.
+- [x] Diff is a single-line, scoped change to the exact field causing the bug       
+- [x] No unrelated formatting; matches project code style                   
+- [x] Doesn't touch backend since the needed filter already existed                     
 
 **Evaluate:** 
-[x] Reproduce the original steps and confirm the variant no longer appears
-[x] Add a regression test exercising StockFilter with include_variants=false
-[x] Run existing backend/frontend test suites to confirm no regressions.
+- [x] Reproduce the original steps and confirm the variant no longer appears       
+- [x] Add a regression test exercising StockFilter with include_variants=false                     
 
 ---
 
 ## Testing Strategy
 
 ### Unit Tests
-
-- [ ] Backend: StockItem API list test: given a part with variants and stock for each, requesting ?part=<id>&include_variants=false returns only stock for the exact part
-- [ ] Backend: existing include_variants=true/default behavior still returns descendant stock (no regression)
+- [x] Backend: `test_filter_by_part_include_variants` in stock/test_api.py — asserts `?part=<id>&include_variants=false` returns only exact-part stock, and confirms `include_variants=true`/default is unchanged
 
 ### Integration Tests
 
-- [ ] End-to-end: BOM line with allow_variants=False → Install Stock Item dialog never surfaces variant stock, install succeeds only for the exact part
-- [ ] End-to-end: BOM line with allow_variants=True → variant appears as a separate Part-selector option; selecting it shows only its own stock
+- [x] End-to-end: BOM line with allow_variants=False -> Install Stock Item dialog never surfaces variant stock, install succeeds only for the exact part
+- [x] End-to-end: BOM line with allow_variants=True -> variant appears as a separate Part-selector option; selecting it shows only its own stock
 
 ### Manual Testing
 
-[What you tested manually and results]
+Reproduced the original bug against `main` to establish a baseline: selecting the `Widget` parent in the Part selector returned both `WIDGET-BATCH` and `WIDGET-RED-BATCH` in the Stock Item selector, and submitting the red variant failed with *"Selected part is not in the Bill of Materials"*. After applying the bug fix in `StockForms.tsx` and reloading via the dev server, I re-ran the exact reproduction steps and additional variations:
+
+- With `allow_variants = False`: only `WIDGET-BATCH` appeared in the Stock Item selector; `WIDGET-RED-BATCH` was correctly filtered out. Install completed successfully.
+- With `allow_variants = True` on the same BOM line: both stock items appeared, and install completed successfully for either choice — matching intended behavior with no over-filtering.
+- Non-variant part on a BOM (added a plain resistor part with no variants): no visible change vs. pre-fix, install works as before.
 
 ---
 
@@ -156,15 +156,28 @@ Using UMPIRE framework (adapted):
 
 ### Week [1] Progress
 
+- Environment setup and reproduction. I brought up the Dev Container, hit the "Database Migrations required" error, resolved it with `invoke update`, and confirmed I could reproduce the bug locally using a minimal fixture.
+- Did an investigation trace to isolate where the two selectors diverged. 
+
+**Investigation trace:**
+- Started at the frontend: opened the browser Network tab during the Install Stock Item flow. The Stock Item selector was firing `GET /api/stock/?part=<parent_id>` with no `include_variants` parameter — which means the API's default (`True`) applied, and variant stock was included.
+- Located the source of that request in `src/frontend/src/forms/StockForms.tsx`, inside `useStockItemInstallFields()`, in the `filters` object attached to the `stock_item` field.
+- Cross-checked the Part selector's filter in the same hook: it uses `in_bom_for: <install_into_id>`, the correct BOM-aware filter, which is why the Part selector behaves correctly.
+- Followed `in_bom_for` into `src/backend/InvenTree/part/api.py` (`filter_in_bom`), which calls `Part.get_parts_in_bom()` -> `BomItem.get_valid_parts_for_allocation()`. That method only unions in variants when `self.allow_variants` is `True` on the BOM line exactly the semantics that needed to be mirrored on the stock side.
+- Confirmed in `src/backend/InvenTree/stock/api.py` that `include_variants` is already an exposed filter on the `StockFilter` FilterSet, defaulting to `True`. That global default is the right choice for the API as a whole (other callers depend on it), so the fix belonged at the specific call site, not in the API default.
+
+**Files modified:**
 Files modified: src/frontend/src/forms/StockForms.tsx (useStockItemInstallFields, stock_item field filters — added include_variants: false)
 
-
+**Blockers hit and resolved:**
+- Dev Container startup failed with "Database Migrations required"; fixed with `invoke update` before starting the backend server.
+- Early ambiguity about where the fix belonged in backend default vs. frontend opt-in. Ruled out changing the backend default after verifying `include_variants` and finding several that intentionally rely on it.
 
 ### Code Changes
 
 - **Files modified:** src/frontend/src/forms/StockForms.tsx
-- **Key commits:** https://github.com/inventree/InvenTree/commit/598b121ea01c003c3f3fdc85b10d1d170092cad5
-- **Approach decisions:** Approach decisions: Chose a frontend-only fix rather than changing the backend default, since stock/api.py already exposes include_variants as an explicit opt-in filter for exactly this purpose — the bug was that this form never set it, not that the API lacked the capability. Rejected changing the backend default to include_variants=False globally, since other call sites intentionally rely on the current default to include variant stock.
+- **Key commits:** https://github.com/siddhartha928/InvenTree/commit/598b121ea01c003c3f3fdc85b10d1d170092cad5
+- **Approach decisions:** Chose a frontend-only fix rather than changing the backend default, since stock/api.py already exposes include_variants as an explicit opt-in filter for exactly this purpose — the bug was that this form never set it, not that the API lacked the capability. Rejected changing the backend default to include_variants=False globally, since other call sites intentionally rely on the current default to include variant stock.
 
 ---
 
