@@ -110,7 +110,8 @@ All 404 existing tests pass on my fix branch. Since the change is a single-chara
 - [x] BPMH form loads and the save button renders the correct label from the message key.
 
 ### Regression Test
-- [x] Add regression test to verify the UI change   https://github.com/siddhartha928/carlos/commit/a42e01487e4833afa8f07e3edb9d6d9412a10437
+- [x] Added FormBPMHJspRegressionTest, which reads`formBPMH.jsp` and asserts the save button's `value` attribute uses ASCII
+double quotes.   https://github.com/siddhartha928/carlos/commit/a42e01487e4833afa8f07e3edb9d6d9412a10437
 
 ### Manual Testing
 
