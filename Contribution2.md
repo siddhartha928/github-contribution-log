@@ -87,11 +87,18 @@ Using the UMPIRE framework (adapted):
 - ✅ Follows project's JSP conventions.
 - ✅ Commit is signed off (DCO) and follows Conventional Commits format.
 
-**Evaluate:** Visual inspection of the file confirms the correct character. JSP compile and browser render of the form show the save button label correctly.
+**Evaluate:** Visual inspection of the file confirms the correct character. JSP compile and browser rendering of the form show the save button label correctly.
 
 ---
 
 ## Testing Strategy
+
+### Existing Test Suite Verification
+Ran the full project test suite against my fix branch to verify no regressions:
+Tests run: 404, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+
+All 404 existing tests pass on my fix branch. Since the change is a single-character Unicode correction in a JSP file with no logic change, this is the expected outcome and confirms the fix introduces no regressions.
 
 ### Unit Tests
 
@@ -101,6 +108,9 @@ Using the UMPIRE framework (adapted):
 
 - [x] JSP compiles without errors after the change.
 - [x] BPMH form loads and the save button renders the correct label from the message key.
+
+### Regression Test
+- [x] Add regression test to verify the UI change   https://github.com/siddhartha928/carlos/commit/a42e01487e4833afa8f07e3edb9d6d9412a10437
 
 ### Manual Testing
 
