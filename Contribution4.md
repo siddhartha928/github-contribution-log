@@ -6,7 +6,7 @@
 **Student:** Siddhartha Ravilla  
 **Issue:** https://github.com/inventree/InvenTree/issues/12232    
 **Fork Link:** https://github.com/siddhartha928/InvenTree           
-**Status:** [Phase III] [Complete]
+**Status:** [Phase IV] [Complete]
 
 ---
 
@@ -183,15 +183,16 @@ Files modified: src/frontend/src/forms/StockForms.tsx (useStockItemInstallFields
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when submitted]
+**PR Link:** https://github.com/inventree/InvenTree/pull/12596
 
-**PR Description:** [Draft or final PR description - much of the content above can be adapted]
+**PR Description:** Fixes the "Install Stock Item" dialog so the stock item selector only lists stock for the exact part chosen in the part selector, instead of also including stock for all of that part's variants. This closes a gap where the UI would let a user pick a variant's stock item that the backend would then reject at submit time.
+
+Closes https://github.com/inventree/InvenTree/issues/12232. When installing a stock item into an assembly with a BOM, the part selector already correctly restricts choices based on the BOM (respecting each line's "Allow Variants" setting). However, the stock item selector is filtered only by the selected part, and the stock list API's include_variants filter defaults to true when not specified, so it silently re-expanded results to include every variant's stock, even for BOM lines with variants disallowed. This meant a user could select a variant's stock item that the install serializer's BOM check would then reject with "Selected part is not in the Bill of Materials." The fix passes include_variants: false explicitly in the stock item selector's filters so it never shows options the backend won't allow.
 
 **Maintainer Feedback:**
-- [Date]: [Summary of feedback received]
-- [Date]: [How you addressed it]
+- [08/08/2026]: Review requested
 
-**Status:** [Awaiting review / Iterating / Approved / Merged]
+**Status:** [Awaiting review]
 
 ---
 
@@ -199,20 +200,28 @@ Files modified: src/frontend/src/forms/StockForms.tsx (useStockItemInstallFields
 
 ### Technical Skills Gained
 
-[What you learned technically]
+- Tracing a bug across a full stack boundary: a frontend form field passing incomplete query params, versus a backend filter (include_variants) that already existed but was never invoked with the right value. learned to check both "does the capability exist" and "is it actually being used" before assuming a fix needs backend changes
+- Reading Django REST Framework FilterSet methods (filter_part, get_valid_parts_for_allocation) to understand how a seemingly simple list endpoint encodes business logic (BOM allow_variants) several calls deep
+- Writing a Django APITestCase-style regression test that follows an existing project's conventions (fixtures, a get_stock() helper, assertion style) rather than inventing a new pattern
+- Diagnosing a broken pre-commit hook (missing prek binary) and resolving it by installing the tool directly rather than bypassing the hook with --no-verify
 
 ### Challenges Overcome
 
-[What was hard and how you solved it]
+- Deciding where the fix belonged. My first instinct was to flip the `include_variants` default in the backend, but a quick grep showed other callers rely on the current default. Scoped the fix to the one misbehaving caller in `StockForms.tsx` instead.
+- Tracing through DRF FilterSets. The path from `in_bom_for` on the frontend to `BomItem.allow_variants` on the model was three hops deep. I got unstuck by reading `get_valid_parts_for_allocation()` end to end and spotting the `if self.allow_variants:` branch
+- Broken pre-commit hook. The `prek` binary was missing on first commit. Resisted `--no-verify` and installed the tool properly so the commit passed the project's lint/format checks cleanly.
+- Migrations blocker on container startup. Wasted time poking at Docker before finding that `invoke update` (documented in the setup guide) resolves it. Should have read the contributor docs fully before running commands.
 
 ### What I'd Do Differently Next Time
 
-[Reflection on your process]
+- Check the API contract first. Opening the Network tab and comparing the actual request against the `StockFilter` params would have surfaced the missing `include_variants` in five minutes instead of an hour of reading form code.
+- Add a frontend test next to the changed line. My backend regression test proves the API works given the right param, but a Vitest assertion on `useStockItemInstallFields()` would pin down the exact line that had the bug.
 
 ---
 
 ## Resources Used
 
-- [Link to helpful documentation]
-- [Tutorial or Stack Overflow post that helped]
-- [GitHub issues or discussions that helped]
+- https://github.com/inventree/InvenTree/blob/master/docs/docs/develop/devcontainer.md
+- https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md
+- https://www.django-rest-framework.org/api-guide/filtering/#djangofilterbackend
+- https://github.com/j178/prek
